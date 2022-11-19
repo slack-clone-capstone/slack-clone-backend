@@ -19,6 +19,12 @@
   },
   "homepage": "https://github.com/slack-clone-capstone/slack-clone-backend#readme",
   "dependencies": {
-    "nodemon": "^2.0.20"
+    "dotenv": "^16.0.3",
+    "nodemon": "^2.0.20",
+    "pg": "^8.8.0",
+    "sequelize": "^6.25.6"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.5.2"
   }
 }
