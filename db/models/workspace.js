@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.user, { through: "user_workspace" });
+      this.belongsToMany(models.user, { through: "user_workspace" });
       this.hasMany(models.chat);
     }
   }

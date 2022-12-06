@@ -9,10 +9,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_chat_id: {
+      user_id: {
         type: Sequelize.INTEGER,
-        references: { model: "user_chats", key: "id" },
+        references: { model: "users", key: "id" },
       },
+      chat_id: {
+        type: Sequelize.INTEGER,
+        references: { model: "chats", key: "id" },
+      },
+      // user_chat_id: {
+      //   type: Sequelize.INTEGER,
+      //   references: { model: "user_chats", key: "user_chat_id" },
+      // },
       is_edited: {
         type: Sequelize.BOOLEAN,
       },

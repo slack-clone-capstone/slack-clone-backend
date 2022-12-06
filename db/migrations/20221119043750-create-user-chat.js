@@ -9,6 +9,12 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      // user_chat_id: {
+      //   autoIncrement: true,
+      //   unique: true,
+      //   allowNull: false,
+      //   type: Sequelize.INTEGER,
+      // },
       user_id: {
         allowNull: false,
         type: Sequelize.INTEGER,

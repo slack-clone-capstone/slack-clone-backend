@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsToMany(models.user, { through: "user_chats" });
       this.belongsTo(models.workspace);
+      this.hasMany(models.message);
     }
   }
   chat.init(
