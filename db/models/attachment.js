@@ -1,6 +1,5 @@
 "use strict";
 const { Model } = require("sequelize");
-const message = require("./message");
 module.exports = (sequelize, DataTypes) => {
   class attachment extends Model {
     /**

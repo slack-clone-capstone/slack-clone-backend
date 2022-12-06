@@ -9,11 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.message);
+      // this.hasMany(models.message);
     }
   }
   user_chat.init(
     {
+      // user_chat_id: DataTypes.INTEGER,
       user_id: {
         type: DataTypes.INTEGER,
         references: { model: "users", key: "id" },

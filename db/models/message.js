@@ -9,16 +9,26 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.user_chats, { foreignkey: "user_chat_id" });
+      this.belongsTo(models.user, { foreignkey: "user_id" });
+      this.belongsTo(models.chat, { foreignkey: "chat_id" });
       this.hasMany(models.attachment);
     }
   }
   message.init(
     {
-      user_chat_id: {
+      user_id: {
         type: DataTypes.INTEGER,
-        references: { model: "user_chats", key: "id" },
+        references: { model: "users", key: "id" },
       },
+      chat_id: {
+        type: DataTypes.INTEGER,
+        references: { model: "chats", key: "id" },
+      },
+
+      // user_chat_id: {
+      //   type: DataTypes.INTEGER,
+      //   references: { model: "user_chats", key: "user_chat_id" },
+      // },
       is_edited: DataTypes.BOOLEAN,
       text: DataTypes.TEXT,
     },
