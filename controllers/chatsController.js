@@ -8,7 +8,7 @@ class ChatsController extends BaseController {
   }
 
   async getAllUserChats(req, res) {
-    const { userId, workspaceId } = req.body;
+    const { userId, workspaceId } = req.query;
     try {
       const userChats = await this.userChatsModel.findAll({
         where: {

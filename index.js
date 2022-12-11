@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+// import middleware
+const auth = require("./middleware/auth");
+
 // import Routers
 const UsersRouter = require("./routers/usersRouter");
 const UserWorkspacesRouter = require("./routers/userWorkspacesRouter");
@@ -36,12 +39,13 @@ const chatsController = new ChatsController(chat, user_chat);
 const messagesController = new MessagesController(message, user_chat);
 
 // initialise routers
-const usersRouter = new UsersRouter(usersController).routes();
+const usersRouter = new UsersRouter(usersController, auth).routes();
 const userWorkspacesRouter = new UserWorkspacesRouter(
-  userWorkspacesController
+  userWorkspacesController,
+  auth
 ).routes();
-const chatsRouter = new ChatsRouter(chatsController).routes();
-const messagesRouter = new MessagesRouter(messagesController).routes();
+const chatsRouter = new ChatsRouter(chatsController, auth).routes();
+const messagesRouter = new MessagesRouter(messagesController, auth).routes();
 
 const PORT = process.env.PORT;
 const app = express();
