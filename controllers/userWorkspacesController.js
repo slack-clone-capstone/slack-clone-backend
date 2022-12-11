@@ -8,7 +8,7 @@ class UserWorkspacesController extends BaseController {
   }
 
   async getUserWorkspace(req, res) {
-    const { userId } = req.body;
+    const { userId } = req.query;
     try {
       const userWorkspace = await this.model.findAll({
         where: { user_id: userId },
@@ -31,7 +31,7 @@ class UserWorkspacesController extends BaseController {
   }
 
   async getNumUsersInWorkspace(req, res) {
-    const { workspaceId } = req.body;
+    const { workspaceId } = req.query;
     try {
       const count = await this.model.count({
         where: {
