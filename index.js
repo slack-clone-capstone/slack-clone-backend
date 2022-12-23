@@ -69,7 +69,7 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: PORT,
+    origin: "http://localhost:3001",
     methods: ["GET", "POST"],
   },
 });
@@ -91,6 +91,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () => {
+server.listen(3002, () => {
   console.log("Server running");
 });
