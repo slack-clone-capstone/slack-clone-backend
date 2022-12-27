@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", (data) => {
     console.log(data);
-    io.to(data.selectedChatId).emit("receive_message", data);
+    io.to(data.chatId).emit("receive_message", data);
   });
 
   socket.on("disconnect", () => {
