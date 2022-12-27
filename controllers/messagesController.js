@@ -24,12 +24,13 @@ class messagesController extends BaseController {
 
   // create new chat at the same time???
   async postNewMessage(req, res) {
-    const { chatId, userId, text } = req.body;
+    const { chatId, userId, text, date } = req.body;
     try {
       const message = await this.model.create({
         chat_id: chatId,
         user_id: userId,
         text: text,
+        date: date,
         is_edited: "FALSE", // need default value to be false
       });
       return res.json(message);
@@ -41,7 +42,7 @@ class messagesController extends BaseController {
 
   async editMessage(req, res) {
     const { messageId } = req.params;
-    const { text } = req.body;
+    const { text, date } = req.body;
     try {
       const message = await this.model.update(
         {

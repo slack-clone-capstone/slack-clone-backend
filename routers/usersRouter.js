@@ -13,6 +13,12 @@ class UsersRouter {
       this.auth,
       this.controller.getOrCreateUser.bind(this.controller)
     );
+    // to get user's info
+    router.get(
+      "/:userId",
+      this.auth,
+      this.controller.getUserInfo.bind(this.controller)
+    );
     return router;
   }
 }

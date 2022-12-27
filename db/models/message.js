@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       // },
       is_edited: DataTypes.BOOLEAN,
       text: DataTypes.TEXT,
+      date: DataTypes.DATE,
     },
     {
       sequelize,
