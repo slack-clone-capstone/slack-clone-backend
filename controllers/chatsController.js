@@ -2,9 +2,10 @@ const { Op } = require("sequelize");
 const BaseController = require("./baseController");
 
 class ChatsController extends BaseController {
-  constructor(model, userChatsModel) {
+  constructor(model, userChatsModel, usersModel) {
     super(model);
     this.userChatsModel = userChatsModel;
+    this.usersModel = usersModel;
   }
 
   async getAllUserChats(req, res) {
@@ -46,13 +47,22 @@ class ChatsController extends BaseController {
     } = req.body;
     try {
       const newChat = await this.model.create({
-        user_id: userId,
+        // user_id: userId,
         workspace_id: workspaceId,
         type: type,
         channel_name: channelName || null,
         channel_description: channelDescription || null,
-        channel_private: channelPrivate || null,
+        channel_private: channelPrivate,
       });
+      const user = await this.usersModel.getUserInfo({
+        where: { user_id: userId },
+      });
+      newChat.addUser(user);
+      const result = await this.model.findOne({
+        where: { channel_name: channelName },
+        include: this.usersModel,
+      });
+      console.log(result);
       return res.json(newChat);
     } catch (err) {
       console.log(err);
