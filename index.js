@@ -35,7 +35,12 @@ const userWorkspacesController = new UserWorkspacesController(
   user_workspace,
   workspace
 );
-const chatsController = new ChatsController(chat, user_chat);
+const chatsController = new ChatsController(
+  chat,
+  user_chat,
+  user,
+  user_workspace
+);
 const messagesController = new MessagesController(message, user_chat);
 
 // initialise routers

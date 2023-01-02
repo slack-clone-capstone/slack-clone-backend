@@ -46,6 +46,22 @@ class UserWorkspacesController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   }
+
+  async getWorkspaceUsers(req, res) {
+    const { workspaceId } = req.query;
+    try {
+      const users = await this.model.findAll({
+        where: {
+          workspace_id: workspaceId,
+        },
+      });
+      console.log(users);
+      res.json(users);
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
 }
 
 module.exports = UserWorkspacesController;

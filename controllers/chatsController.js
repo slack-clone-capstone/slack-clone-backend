@@ -1,11 +1,13 @@
 const { Op } = require("sequelize");
+const workspace = require("../db/models/workspace");
 const BaseController = require("./baseController");
 
 class ChatsController extends BaseController {
-  constructor(model, userChatsModel, usersModel) {
+  constructor(model, userChatsModel, usersModel, userWorkspacesModel) {
     super(model);
     this.userChatsModel = userChatsModel;
     this.usersModel = usersModel;
+    this.userWorkspacesModel = userWorkspacesModel;
   }
 
   async getAllUserChats(req, res) {
@@ -47,23 +49,30 @@ class ChatsController extends BaseController {
     } = req.body;
     try {
       const newChat = await this.model.create({
-        // user_id: userId,
         workspace_id: workspaceId,
         type: type,
         channel_name: channelName || null,
         channel_description: channelDescription || null,
         channel_private: channelPrivate,
       });
-      const user = await this.usersModel.getUserInfo({
-        where: { user_id: userId },
-      });
-      newChat.addUser(user);
+      if (channelPrivate === false) {
+        const usersInWorkspace = await this.userWorkspacesModel.findAll({
+          where: {
+            workspace_id: workspaceId,
+          },
+        });
+        for (let i = 0; i < usersInWorkspace.length; i += 1) {
+          const workspaceUser = usersInWorkspace[i].userId;
+          newChat.addUser(workspaceUser);
+        }
+      } else {
+        newChat.addUser(userId);
+      }
       const result = await this.model.findOne({
         where: { channel_name: channelName },
         include: this.usersModel,
       });
-      console.log(result);
-      return res.json(newChat);
+      return res.json(result);
     } catch (err) {
       console.log(err);
       return res.status(400).json({ error: true, msg: err });

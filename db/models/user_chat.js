@@ -17,11 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       // user_chat_id: DataTypes.INTEGER,
       user_id: {
         type: DataTypes.INTEGER,
-        references: { model: "users", key: "id" },
+        // references: { model: "user", key: "id" },
       },
       chat_id: {
         type: DataTypes.INTEGER,
-        references: { model: "chats", key: "id" },
+        // references: { model: "chat", key: "id" },
       },
     },
     {
