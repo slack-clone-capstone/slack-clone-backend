@@ -19,6 +19,7 @@ class UsersRouter {
       this.auth,
       this.controller.getUserInfo.bind(this.controller)
     );
+    router.get("/", this.auth, this.controller.getAll.bind(this.controller));
     return router;
   }
 }

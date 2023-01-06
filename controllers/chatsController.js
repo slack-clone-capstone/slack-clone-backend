@@ -46,6 +46,7 @@ class ChatsController extends BaseController {
       channelName,
       channelDescription,
       channelPrivate,
+      othersUserId,
     } = req.body;
     try {
       const newChat = await this.model.create({
@@ -55,24 +56,36 @@ class ChatsController extends BaseController {
         channel_description: channelDescription || null,
         channel_private: channelPrivate,
       });
-      if (channelPrivate === false) {
-        const usersInWorkspace = await this.userWorkspacesModel.findAll({
-          where: {
-            workspace_id: workspaceId,
-          },
-        });
-        for (let i = 0; i < usersInWorkspace.length; i += 1) {
-          const workspaceUser = usersInWorkspace[i].userId;
-          newChat.addUser(workspaceUser);
+      if (type === "channel") {
+        if (channelPrivate === false) {
+          const usersInWorkspace = await this.userWorkspacesModel.findAll({
+            where: {
+              workspace_id: workspaceId,
+            },
+          });
+          for (let i = 0; i < usersInWorkspace.length; i += 1) {
+            const workspaceUser = usersInWorkspace[i].userId;
+            newChat.addUser(workspaceUser);
+          }
+        } else {
+          newChat.addUser(userId);
         }
+        const result = await this.model.findOne({
+          where: { channel_name: channelName },
+          include: this.usersModel,
+        });
+        return res.json(result);
       } else {
+        for (let i = 0; i < othersUserId.length; i += 1) {
+          newChat.addUser(othersUserId[i]);
+        }
         newChat.addUser(userId);
+        const result = await this.model.findOne({
+          where: { channel_name: channelName },
+          include: this.usersModel,
+        });
+        return res.json(result);
       }
-      const result = await this.model.findOne({
-        where: { channel_name: channelName },
-        include: this.usersModel,
-      });
-      return res.json(result);
     } catch (err) {
       console.log(err);
       return res.status(400).json({ error: true, msg: err });
