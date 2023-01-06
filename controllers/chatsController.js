@@ -135,6 +135,19 @@ class ChatsController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   }
+
+  async getUsersInChat(req, res) {
+    const { chatId } = req.params;
+    try {
+      const users = await this.userChatsModel.findAll({
+        where: { chat_id: chatId },
+      });
+      return res.json(users);
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
 }
 
 module.exports = ChatsController;

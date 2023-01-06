@@ -33,6 +33,11 @@ class ChatsRouter {
       this.auth,
       this.controller.deleteChat.bind(this.controller)
     );
+    router.get(
+      "/users/:chatId",
+      this.auth,
+      this.controller.getUsersInChat.bind(this.controller)
+    );
 
     return router;
   }
