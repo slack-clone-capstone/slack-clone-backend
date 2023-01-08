@@ -9,12 +9,38 @@ class messagesController extends BaseController {
 
   async getAllMessages(req, res) {
     const { chatId } = req.params;
+    const { userId } = req.query;
+
+    console.log(userId);
     try {
       const messages = await this.model.findAll({
         where: {
           chat_id: chatId,
         },
+        raw: true,
       });
+
+      let messageStatus = {};
+      for (let i = 0; i < messages.length; i += 1) {
+        if (!(messages[i].id in messageStatus)) {
+          messageStatus[messages[i].id] = { is_read: false };
+        }
+
+        for (let j = 0; j < messages[i].read.length; j += 1) {
+          if (userId == messages[i].read[j]) {
+            messageStatus[messages[i].id]["is_read"] = true;
+          }
+        }
+      }
+
+      for (let i = 0; i < messages.length; i += 1) {
+        // console.log(messages[i]);
+        if (messages[i].id in messageStatus) {
+          messages[i]["is_read"] = messageStatus[messages[i].id]["is_read"]; // this should be true or false
+        }
+      }
+
+      console.log("MESSAGES", userId, messages);
       return res.json(messages);
     } catch (err) {
       console.log(err);
@@ -48,7 +74,7 @@ class messagesController extends BaseController {
         user_id: userId,
         text: text,
         date: date,
-        read: null, // null because when the message is first posted, assume that no one has read the message yet
+        read: [userId], // assume that no one has read the message yet apart from poster
         unread: usersInChatArr,
         is_edited: "FALSE", // need default value to be false
       });

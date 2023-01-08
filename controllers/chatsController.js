@@ -39,33 +39,6 @@ class ChatsController extends BaseController {
         raw: true,
       });
 
-      // console.log(chats);
-
-      // chats need to have a tagging of whether there are read or unread messages and the count
-      // to do so, need to look at messages db and tag details accordingly
-
-      // const messages = await this.messagesModel.findAll({
-      //   where: { read: null }, // if read is null, that means the messages are unread
-      // });
-
-      // // for each message, look at the unread column to identify if user is inside. If yes, chat should be marked as unread for user
-      // let unreadChats = {}; // these are the chats based on unread messages
-      // for (let i = 0; i < messages.length; i += 1) {
-      //   // for each message id
-
-      //   for (let j = 0; j < messages[i].unread.length; j += 1) {
-      //     // for each userId in unread column of each message
-      //     if (userId == messages[i].unread[j]) {
-      //       // console.log(messages[i].chat_id);
-      //       if (!(messages[i].chat_id in unreadChats)) {
-      //         unreadChats[messages[i].chat_id] = 1;
-      //       } else {
-      //         unreadChats[messages[i].chat_id] += 1;
-      //       }
-      //     }
-      //   }
-      // }
-
       const messages = await this.messagesModel.findAll();
       let chatStatus = {};
       for (let i = 0; i < messages.length; i += 1) {
