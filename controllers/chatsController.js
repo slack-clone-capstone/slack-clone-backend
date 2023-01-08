@@ -3,11 +3,18 @@ const workspace = require("../db/models/workspace");
 const BaseController = require("./baseController");
 
 class ChatsController extends BaseController {
-  constructor(model, userChatsModel, usersModel, userWorkspacesModel) {
+  constructor(
+    model,
+    userChatsModel,
+    usersModel,
+    userWorkspacesModel,
+    messagesModel
+  ) {
     super(model);
     this.userChatsModel = userChatsModel;
     this.usersModel = usersModel;
     this.userWorkspacesModel = userWorkspacesModel;
+    this.messagesModel = messagesModel;
   }
 
   async getAllUserChats(req, res) {
@@ -23,13 +30,79 @@ class ChatsController extends BaseController {
       for (let i = 0; i < userChats.length; i += 1) {
         chatId.push(userChats[i]["chat_id"]);
       }
-      console.log(chatId);
+      // console.log(chatId);
 
       const chats = await this.model.findAll({
         where: {
           [Op.and]: { workspace_id: workspaceId, id: { [Op.in]: chatId } },
         },
+        raw: true,
       });
+
+      // console.log(chats);
+
+      // chats need to have a tagging of whether there are read or unread messages and the count
+      // to do so, need to look at messages db and tag details accordingly
+
+      // const messages = await this.messagesModel.findAll({
+      //   where: { read: null }, // if read is null, that means the messages are unread
+      // });
+
+      // // for each message, look at the unread column to identify if user is inside. If yes, chat should be marked as unread for user
+      // let unreadChats = {}; // these are the chats based on unread messages
+      // for (let i = 0; i < messages.length; i += 1) {
+      //   // for each message id
+
+      //   for (let j = 0; j < messages[i].unread.length; j += 1) {
+      //     // for each userId in unread column of each message
+      //     if (userId == messages[i].unread[j]) {
+      //       // console.log(messages[i].chat_id);
+      //       if (!(messages[i].chat_id in unreadChats)) {
+      //         unreadChats[messages[i].chat_id] = 1;
+      //       } else {
+      //         unreadChats[messages[i].chat_id] += 1;
+      //       }
+      //     }
+      //   }
+      // }
+
+      const messages = await this.messagesModel.findAll();
+      let chatStatus = {};
+      for (let i = 0; i < messages.length; i += 1) {
+        if (!(messages[i].chat_id in chatStatus)) {
+          // if there is no messages in the chat
+          chatStatus[messages[i].chat_id] = {
+            has_unread_messages: false, // no unread messages
+            num_unread_messages: 0, // 0 unread messages
+          };
+        } else {
+          // if there are messages in the chat
+          //for each message -- each userId in unread column
+          if (messages[i].unread != null) {
+            for (let j = 0; j < messages[i].unread.length; j += 1) {
+              // console.log(j);
+              if (userId == messages[i].unread[j]) {
+                // console.log("has unread");
+                chatStatus[messages[i].chat_id]["has_unread_messages"] = true;
+                chatStatus[messages[i].chat_id]["num_unread_messages"] += 1;
+              }
+            }
+          }
+        }
+      }
+
+      // combine chat list with read or unread
+      for (let i = 0; i < chats.length; i += 1) {
+        if (chats[i].id in chatStatus) {
+          chats[i]["has_unread_messages"] =
+            chatStatus[chats[i].id]["has_unread_messages"]; // this should be true or false
+          chats[i]["num_unread_messages"] =
+            chatStatus[chats[i].id]["num_unread_messages"]; // this should be an integer
+        }
+      }
+
+      // console.log(chats);
+
       return res.json(chats);
     } catch (err) {
       console.log(err);

@@ -30,6 +30,14 @@ module.exports = {
       date: {
         type: Sequelize.DATE,
       },
+      read: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        allowNull: true,
+      },
+      unread: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

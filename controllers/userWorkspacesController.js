@@ -39,7 +39,7 @@ class UserWorkspacesController extends BaseController {
         },
         group: "workspace_id",
       });
-      console.log(count);
+      // console.log(count);
       res.json(count);
     } catch (err) {
       console.log(err);
@@ -55,7 +55,7 @@ class UserWorkspacesController extends BaseController {
           workspace_id: workspaceId,
         },
       });
-      console.log(users);
+      // console.log(users);
       res.json(users);
     } catch (err) {
       console.log(err);

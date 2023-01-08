@@ -26,11 +26,30 @@ class messagesController extends BaseController {
   async postNewMessage(req, res) {
     const { chatId, userId, text, date } = req.body;
     try {
+      // to get all users in that chat room
+      const usersInChat = await this.userChatsModel.findAll({
+        where: { chat_id: chatId },
+      });
+
+      // console.log(usersInChat);
+      // console.log(userId);
+
+      let usersInChatArr = [];
+
+      for (let i = 0; i < usersInChat.length; i += 1) {
+        // console.log(usersInChat[i].user_id);
+        if (usersInChat[i].user_id != userId) {
+          usersInChatArr.push(usersInChat[i].userId);
+        }
+      }
+
       const message = await this.model.create({
         chat_id: chatId,
         user_id: userId,
         text: text,
         date: date,
+        read: null, // null because when the message is first posted, assume that no one has read the message yet
+        unread: usersInChatArr,
         is_edited: "FALSE", // need default value to be false
       });
       return res.json(message);

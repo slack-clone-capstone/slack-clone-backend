@@ -39,7 +39,8 @@ const chatsController = new ChatsController(
   chat,
   user_chat,
   user,
-  user_workspace
+  user_workspace,
+  message
 );
 const messagesController = new MessagesController(message, user_chat);
 

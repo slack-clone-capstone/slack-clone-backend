@@ -32,6 +32,14 @@ module.exports = (sequelize, DataTypes) => {
       is_edited: DataTypes.BOOLEAN,
       text: DataTypes.TEXT,
       date: DataTypes.DATE,
+      read: {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+      },
+      unread: {
+        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        allowNull: true,
+      },
     },
     {
       sequelize,
