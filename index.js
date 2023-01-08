@@ -95,6 +95,10 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
   });
+
+  socket.on("typing", (data) => {
+    io.to(data.selectedChatId).emit("typing_response", data.userUsername);
+  });
 });
 
 server.listen(3002, () => {
