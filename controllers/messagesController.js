@@ -40,7 +40,7 @@ class messagesController extends BaseController {
         }
       }
 
-      console.log("MESSAGES", userId, messages);
+      // console.log("MESSAGES", userId, messages);
       return res.json(messages);
     } catch (err) {
       console.log(err);
@@ -112,6 +112,56 @@ class messagesController extends BaseController {
         },
       });
       return res.json(message);
+    } catch (err) {
+      console.log(err);
+      return res.status(400).json({ error: true, msg: err });
+    }
+  }
+
+  async readAllChatMessages(req, res) {
+    const { chatId } = req.params;
+    const { userId, unreadMessageIds } = req.body;
+    console.log("UNREAD!!", userId, unreadMessageIds);
+    try {
+      let unreadMessageDict = {};
+      for (let i = 0; i < unreadMessageIds.length; i += 1) {
+        unreadMessageDict[unreadMessageIds[i]] = unreadMessageIds[i];
+      }
+
+      const messages = await this.model.findAll({
+        where: {
+          id: { [Op.in]: unreadMessageIds },
+        },
+        raw: true,
+      });
+
+      console.log(messages);
+
+      for (let i = 0; i < messages.length; i += 1) {
+        if (messages[i].id in unreadMessageDict) {
+          messages[i].read.push(userId);
+        }
+
+        if (
+          messages[i].unread != null &&
+          messages[i].unread.indexOf(userId) >= 0
+        ) {
+          messages[i].unread.splice(messages[i].unread.indexOf(userId), 1);
+        }
+
+        console.log(messages[i]);
+        const updateMessages = await this.model.update(
+          { read: messages[i].read, unread: messages[i].unread },
+          {
+            where: { id: messages[i].id },
+          }
+        );
+        console.log(userId, messages[i].id, updateMessages);
+      }
+
+      // to input userId and remove userId from read and unread columns
+
+      return res.json();
     } catch (err) {
       console.log(err);
       return res.status(400).json({ error: true, msg: err });

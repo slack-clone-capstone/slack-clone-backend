@@ -19,6 +19,11 @@ class MessagesRouter {
       this.controller.postNewMessage.bind(this.controller)
     );
     router.put(
+      "/:chatId",
+      this.auth,
+      this.controller.readAllChatMessages.bind(this.controller)
+    );
+    router.put(
       "/:messageId",
       this.auth,
       this.controller.editMessage.bind(this.controller)
