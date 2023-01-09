@@ -19,6 +19,11 @@ class UsersRouter {
       this.auth,
       this.controller.getUserInfo.bind(this.controller)
     );
+    // router.get(
+    //   "/all",
+    //   this.auth,
+    //   this.controller.getAllUserInfoForChat.bind(this.controller)
+    // );
     router.get("/", this.auth, this.controller.getAll.bind(this.controller));
     return router;
   }

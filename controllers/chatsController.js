@@ -17,6 +17,8 @@ class ChatsController extends BaseController {
     this.messagesModel = messagesModel;
   }
 
+  // this function returns all chat data, including unread message status, and
+  // number of unread messages
   async getAllUserChats(req, res) {
     const { userId, workspaceId } = req.query;
     try {
@@ -27,9 +29,9 @@ class ChatsController extends BaseController {
       });
 
       const chatId = [];
-      for (let i = 0; i < userChats.length; i += 1) {
-        chatId.push(userChats[i]["chat_id"]);
-      }
+      userChats.forEach((userChat) => {
+        chatId.push(userChat.chat_id);
+      });
 
       const chats = await this.model.findAll({
         where: {
@@ -38,39 +40,60 @@ class ChatsController extends BaseController {
         raw: true,
       });
 
+      const finalChatId = [];
+      chats.forEach((chat) => {
+        finalChatId.push(chat.id);
+      });
+
       const messages = await this.messagesModel.findAll();
       let chatStatus = {};
-      for (let i = 0; i < messages.length; i += 1) {
-        if (!(messages[i].chat_id in chatStatus)) {
-          // if there is no messages in the chat
-          chatStatus[messages[i].chat_id] = {
-            has_unread_messages: false, // no unread messages
-            num_unread_messages: 0, // 0 unread messages
+      messages.forEach((message) => {
+        // initialise for each chat id
+        if (!(message.chat_id in chatStatus)) {
+          chatStatus[message.chat_id] = {
+            has_unread_messages: false,
+            num_unread_messages: 0,
           };
-        } else {
-          // if there are messages in the chat
-          //for each message -- each userId in unread column
-          if (messages[i].unread != null) {
-            for (let j = 0; j < messages[i].unread.length; j += 1) {
-              if (userId == messages[i].unread[j]) {
-                chatStatus[messages[i].chat_id]["has_unread_messages"] = true;
-                chatStatus[messages[i].chat_id]["num_unread_messages"] += 1;
+
+          if (message.unread != null) {
+            message.unread.forEach((unreadUserId) => {
+              if (userId == unreadUserId) {
+                chatStatus[message.chat_id]["has_unread_messages"] = true;
+                chatStatus[message.chat_id]["num_unread_messages"] += 1;
               }
-            }
+            });
           }
         }
-      }
+      });
 
-      // combine chat list with read or unread
-      for (let i = 0; i < chats.length; i += 1) {
-        if (chats[i].id in chatStatus) {
-          chats[i]["has_unread_messages"] =
-            chatStatus[chats[i].id]["has_unread_messages"]; // this should be true or false
-          chats[i]["num_unread_messages"] =
-            chatStatus[chats[i].id]["num_unread_messages"]; // this should be an integer
+      const usersInChat = await this.userChatsModel.findAll({
+        where: { chat_id: { [Op.in]: finalChatId } },
+      });
+
+      let chatUsers = {};
+      usersInChat.forEach((user) => {
+        if (!(user.chat_id in chatUsers)) {
+          chatUsers[user.chat_id] = [];
         }
-      }
+        chatUsers[user.chat_id].push(user.user_id);
+      });
 
+      console.log(chatUsers);
+
+      chats.forEach((chat) => {
+        if (chat.id in chatStatus) {
+          chat["has_unread_messages"] =
+            chatStatus[chat.id]["has_unread_messages"];
+          chat["num_unread_messages"] =
+            chatStatus[chat.id]["num_unread_messages"];
+        }
+
+        if (chat.id in chatUsers) {
+          chat["chat_users"] = chatUsers[chat.id];
+        }
+      });
+
+      console.log(chats);
       return res.json(chats);
     } catch (err) {
       console.log(err);
@@ -177,6 +200,7 @@ class ChatsController extends BaseController {
     }
   }
 
+  // refactored into getAllUserChats -- can remove if no longer needed
   async getUsersInChat(req, res) {
     const { chatId } = req.params;
     try {

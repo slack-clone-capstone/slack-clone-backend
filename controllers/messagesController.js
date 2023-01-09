@@ -114,6 +114,7 @@ class messagesController extends BaseController {
   async readAllChatMessages(req, res) {
     const { chatId } = req.params;
     const { userId, unreadMessageIds } = req.body;
+    console.log(chatId, unreadMessageIds);
 
     try {
       let unreadMessageDict = {};
@@ -127,6 +128,8 @@ class messagesController extends BaseController {
         },
         raw: true,
       });
+
+      console.log(messages);
 
       for (let i = 0; i < messages.length; i += 1) {
         if (messages[i].id in unreadMessageDict) {
@@ -146,7 +149,9 @@ class messagesController extends BaseController {
             where: { id: messages[i].id },
           }
         );
-        console.log(userId, messages[i].id, updateMessages);
+
+        // console.log(updateMessages);
+        // console.log(userId, messages[i].id, updateMessages);
       }
 
       return res.json();

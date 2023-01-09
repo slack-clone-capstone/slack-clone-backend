@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const BaseController = require("./baseController");
 
 class UsersController extends BaseController {
@@ -33,6 +34,20 @@ class UsersController extends BaseController {
       return res.status(400).json({ error: true, msg: err });
     }
   }
+
+  // async getAllUserInfoForChat(req, res) {
+  //   const { userId } = req.query;
+  //   console.log(userId);
+  //   try {
+  //     const user = await this.model.findAll({
+  //       where: { user_id: { [Op.in]: userId } },
+  //     });
+  //     return res.json(user);
+  //   } catch (err) {
+  //     console.log(err);
+  //     return res.status(400).json({ error: true, msg: err });
+  //   }
+  // }
 }
 
 module.exports = UsersController;

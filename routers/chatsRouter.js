@@ -13,6 +13,7 @@ class ChatsRouter {
       this.auth,
       this.controller.getAllUserChats.bind(this.controller)
     );
+
     router.post(
       "/",
       this.auth,
