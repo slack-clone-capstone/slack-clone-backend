@@ -112,8 +112,8 @@ class ChatsController extends BaseController {
           for (let i = 0; i < usersInWorkspace.length; i += 1) {
             const workspaceUser = usersInWorkspace[i].userId;
             newChat.addUser(workspaceUser);
-            newChat.addUser(userId);
           }
+          newChat.addUser(userId);
         } else {
           newChat.addUser(userId);
         }
