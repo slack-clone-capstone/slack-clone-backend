@@ -30,7 +30,6 @@ class ChatsController extends BaseController {
       for (let i = 0; i < userChats.length; i += 1) {
         chatId.push(userChats[i]["chat_id"]);
       }
-      // console.log(chatId);
 
       const chats = await this.model.findAll({
         where: {
@@ -53,9 +52,7 @@ class ChatsController extends BaseController {
           //for each message -- each userId in unread column
           if (messages[i].unread != null) {
             for (let j = 0; j < messages[i].unread.length; j += 1) {
-              // console.log(j);
               if (userId == messages[i].unread[j]) {
-                // console.log("has unread");
                 chatStatus[messages[i].chat_id]["has_unread_messages"] = true;
                 chatStatus[messages[i].chat_id]["num_unread_messages"] += 1;
               }
@@ -73,8 +70,6 @@ class ChatsController extends BaseController {
             chatStatus[chats[i].id]["num_unread_messages"]; // this should be an integer
         }
       }
-
-      // console.log(chats);
 
       return res.json(chats);
     } catch (err) {
@@ -113,7 +108,6 @@ class ChatsController extends BaseController {
             const workspaceUser = usersInWorkspace[i].userId;
             newChat.addUser(workspaceUser);
           }
-          newChat.addUser(userId);
         } else {
           newChat.addUser(userId);
         }

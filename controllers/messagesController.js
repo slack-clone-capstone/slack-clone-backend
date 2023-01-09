@@ -34,13 +34,11 @@ class messagesController extends BaseController {
       }
 
       for (let i = 0; i < messages.length; i += 1) {
-        // console.log(messages[i]);
         if (messages[i].id in messageStatus) {
           messages[i]["is_read"] = messageStatus[messages[i].id]["is_read"]; // this should be true or false
         }
       }
 
-      // console.log("MESSAGES", userId, messages);
       return res.json(messages);
     } catch (err) {
       console.log(err);
@@ -48,7 +46,6 @@ class messagesController extends BaseController {
     }
   }
 
-  // create new chat at the same time???
   async postNewMessage(req, res) {
     const { chatId, userId, text, date } = req.body;
     try {
@@ -57,13 +54,9 @@ class messagesController extends BaseController {
         where: { chat_id: chatId },
       });
 
-      // console.log(usersInChat);
-      // console.log(userId);
-
       let usersInChatArr = [];
 
       for (let i = 0; i < usersInChat.length; i += 1) {
-        // console.log(usersInChat[i].user_id);
         if (usersInChat[i].user_id != userId) {
           usersInChatArr.push(usersInChat[i].userId);
         }
@@ -121,7 +114,7 @@ class messagesController extends BaseController {
   async readAllChatMessages(req, res) {
     const { chatId } = req.params;
     const { userId, unreadMessageIds } = req.body;
-    console.log("UNREAD!!", userId, unreadMessageIds);
+
     try {
       let unreadMessageDict = {};
       for (let i = 0; i < unreadMessageIds.length; i += 1) {
@@ -130,12 +123,10 @@ class messagesController extends BaseController {
 
       const messages = await this.model.findAll({
         where: {
-          id: { [Op.in]: unreadMessageIds },
+          [Op.and]: { chat_id: chatId, id: { [Op.in]: unreadMessageIds } },
         },
         raw: true,
       });
-
-      console.log(messages);
 
       for (let i = 0; i < messages.length; i += 1) {
         if (messages[i].id in unreadMessageDict) {
@@ -149,7 +140,6 @@ class messagesController extends BaseController {
           messages[i].unread.splice(messages[i].unread.indexOf(userId), 1);
         }
 
-        console.log(messages[i]);
         const updateMessages = await this.model.update(
           { read: messages[i].read, unread: messages[i].unread },
           {
@@ -158,8 +148,6 @@ class messagesController extends BaseController {
         );
         console.log(userId, messages[i].id, updateMessages);
       }
-
-      // to input userId and remove userId from read and unread columns
 
       return res.json();
     } catch (err) {
