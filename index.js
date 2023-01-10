@@ -93,6 +93,18 @@ io.on("connection", (socket) => {
     io.to(data.chatId).emit("receive_message", data);
   });
 
+  socket.on("send_message_chat_status", (data) => {
+    console.log("data", data);
+    console.log("data", data.selectedChatId);
+    // console.log("data", data.refreshSidebar);
+
+    io.to(data.selectedChatId).emit(
+      "receive_message_chat_status",
+      true
+      // data.refreshSidebar
+    );
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
   });

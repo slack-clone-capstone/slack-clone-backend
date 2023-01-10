@@ -93,7 +93,7 @@ class ChatsController extends BaseController {
         }
       });
 
-      console.log(chats);
+      console.log(userId, chats);
       return res.json(chats);
     } catch (err) {
       console.log(err);
