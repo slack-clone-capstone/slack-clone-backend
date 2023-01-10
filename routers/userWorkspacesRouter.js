@@ -18,6 +18,11 @@ class UserWorkspacesRouter {
       this.auth,
       this.controller.getNumUsersInWorkspace.bind(this.controller)
     );
+    router.get(
+      "/usersinfo",
+      this.auth,
+      this.controller.getWorkspaceUsers.bind(this.controller)
+    );
 
     return router;
   }
